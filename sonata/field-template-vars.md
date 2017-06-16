@@ -1,0 +1,1 @@
+Sonata field template vars

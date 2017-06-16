@@ -1,0 +1,1 @@
+[Sonata field template files](sonata/field-template-vars.md)
