@@ -14,5 +14,5 @@ $builder->add('fieldName', 'fieldType', [
 
 In the your-template-file.html.twig template:
 ```twig
-{{ field_description.options.types.your_template_var }}
+{{ field_description.options.your_template_var }}
 ```
