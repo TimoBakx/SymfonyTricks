@@ -1,8 +1,8 @@
 # Combining JWT and LDAP
 
 ## Requirements
-For JWT, I use [lexik/jwt-authentication-bundle](https://packagist.org/packages/lexik/jwt-authentication-bundle).
-For LDAP, I use [ldaptools/ldaptools-bundle](https://packagist.org/packages/ldaptools/ldaptools-bundle).
+For JWT, I'm using [lexik/jwt-authentication-bundle](https://packagist.org/packages/lexik/jwt-authentication-bundle).
+For LDAP, I'm using [ldaptools/ldaptools-bundle](https://packagist.org/packages/ldaptools/ldaptools-bundle).
 
 Both can be installed via Composer:
 ```
@@ -14,7 +14,7 @@ Follow the instructions for configuring both packages as normal:
 - JWT: [Configuration](https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#configuration)
 - LDAP: [Getting started](https://github.com/ldaptools/ldaptools-bundle#getting-started)
 
-After that, you can add the LDAP guard to the `login` firewall in your `security.yaml` file:
+After that, you can add the LDAP guard to the `login` firewall in your `config/packages/security.yaml` file:
 ```yaml
 security:
     # ...
@@ -33,6 +33,30 @@ security:
                     - ldap_tools.security.ldap_guard_authenticator
 ```
 
+## Cross-configuration
+Make sure that both packages are using the same names for the username and password parameters.
+
+For JWT, in `config/packages/security.yaml`:
+```yaml
+security:
+    # ...
+    firewalls:
+        login:
+            form_login:
+                username_path: my_username
+                password_path: my_password
+
+```
+
+And for LDAP, in `config/packages/ldaptools.yaml`:
+```yaml
+ldap_tools:
+    security:
+        guard:
+            username_parameter: my_username
+            password_parameter: my_password
+```
+
 ## Using `json_login` instead of `form_login`
 I ran into some problems when using the `json_login` authentication instead of the `form_login` method used above.
 The LDAP Guard Authenticator provided by LDAP Tools can not read the credentials from a JSON encoded POST content.
@@ -45,7 +69,7 @@ I copied the service defintion of the original `LdapGuardAuthenticator`.
 To prevent my JWT requests from being redirected to a (non-existing) login form, I had to use some handlers from the 
 JWT package instead of the default ones from the LDAP package.
 
-In `services.yaml`:
+In `config/services.yaml`:
 ```yaml
 services:
     App\Authentication\Ldap\JsonLdapGuardAuthenticator:
@@ -61,7 +85,7 @@ services:
             - '@ldap_tools.security.user.ldap_user_provider'
 ```
 
-Then the new class can be used as a guard in the `security.yaml` file:
+Then the new class can be used as a guard in the `config/packages/security.yaml` file:
 ```yaml
 security:
     # ...
