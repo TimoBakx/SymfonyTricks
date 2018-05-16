@@ -18,9 +18,7 @@ After that, you can add the LDAP guard to the `login` firewall in your `security
 ```yaml
 security:
     # ...
-    
     firewalls:
-
         login:
             pattern:  ^/api/login
             stateless: true
@@ -47,6 +45,7 @@ I copied the service defintion of the original `LdapGuardAuthenticator`.
 To prevent my JWT requests from being redirected to a (non-existing) login form, I had to use some handlers from the 
 JWT package instead of the default ones from the LDAP package.
 
+In `services.yaml`:
 ```yaml
 services:
     App\Authentication\Ldap\JsonLdapGuardAuthenticator:
@@ -60,4 +59,16 @@ services:
             - '@lexik_jwt_authentication.handler.authentication_failure' # Instead of '@ldap_tools.security.auth_failure_handler'
             - '%ldap_tools.security.guard.options%'
             - '@ldap_tools.security.user.ldap_user_provider'
+```
+
+Then the new class can be used as a guard in the `security.yaml` file:
+```yaml
+security:
+    # ...
+    firewalls:
+        login:
+            # ...
+            guard:
+                authenticators:
+                    - App\Authentication\Ldap\JsonLdapGuardAuthenticator
 ```
