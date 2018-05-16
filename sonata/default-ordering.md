@@ -1,4 +1,4 @@
-#Default ordering in Admin list view
+# Default ordering in Admin list view
 How to set the default ordering in the Admin list view
 
 In the admin constructor:
